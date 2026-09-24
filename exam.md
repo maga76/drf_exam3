@@ -209,9 +209,9 @@ exam_week3/
 
 ### API
 
-- [ ] Django REST Framework не подключён в `INSTALLED_APPS`.
-- [ ] `serializers.py` не создан.
-- [ ] `ModelSerializer` не написаны.
+- [x] Django REST Framework подключён в `INSTALLED_APPS`.
+- [x] Создан `serializers.py`.
+- [x] Для текущих моделей написаны простые `ModelSerializer`.
 - [ ] `ModelViewSet` не написаны.
 - [x] Принято решение не использовать `router`.
 - [ ] API URLs не созданы. Их нужно написать вручную через `path()` и `as_view()`.
@@ -279,7 +279,7 @@ exam_week3/
 | Models | FIRST SIMPLE VERSION DONE |
 | Migrations for current models | DONE |
 | Admin | DONE |
-| Serializers | NOT DONE |
+| Serializers | DONE |
 | Views / ViewSets | NOT DONE |
 | URLs без Router | NOT DONE |
 | JWT | NOT DONE |
@@ -304,8 +304,8 @@ exam_week3/
 
 Логичный следующий шаг:
 
-1. Создать serializers.
-2. После этого написать API.
+1. Написать простые `ModelViewSet`.
+2. Подключить их вручную в `urls.py` без `router`.
 
 ---
 
