@@ -196,7 +196,7 @@ exam_week3/
 
 ### Database
 
-- [ ] Новая migration для текущего `models.py` не создана.
+- [x] Создана migration `myapp/migrations/0001_initial.py` для текущего `models.py`.
 - [ ] Текущие модели не применены к `db.sqlite3`.
 - [ ] Тестовые данны не созданы.
 
@@ -277,7 +277,7 @@ exam_week3/
 | `myapp` | DONE |
 | Settings | BASIC DONE |
 | Models | FIRST SIMPLE VERSION DONE |
-| Migrations for current models | NOT DONE |
+| Migrations for current models | CREATED, NOT APPLIED |
 | Admin | NOT DONE |
 | Serializers | NOT DONE |
 | Views / ViewSets | NOT DONE |
@@ -304,11 +304,9 @@ exam_week3/
 
 Логичный следующий шаг:
 
-1. Проверить модели с преподавателем.
-2. Выполнить `python manage.py makemigrations`.
-3. Выполнить `python manage.py migrate`.
-4. Зарегистрировать модели в `admin.py`.
-5. Только после этого переходить к serializers и API.
+1. Выполнить `python manage.py migrate`.
+2. Зарегистрировать модели в `admin.py`.
+3. Только после этого переходить к serializers и API.
 
 ---
 
