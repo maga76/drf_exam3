@@ -49,24 +49,28 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         fields = "__all__"
+        read_only_fields = ("user",)
 
 
 class WishlistSerializer(serializers.ModelSerializer):
     class Meta:
         model = Wishlist
         fields = "__all__"
+        read_only_fields = ("user",)
 
 
 class CompareItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = CompareItem
         fields = "__all__"
+        read_only_fields = ("user",)
 
 
 class CartSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cart
         fields = "__all__"
+        read_only_fields = ("user",)
 
 
 class CartItemSerializer(serializers.ModelSerializer):
@@ -79,6 +83,7 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = "__all__"
+        read_only_fields = ("user",)
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
@@ -91,3 +96,4 @@ class PCBuildSerializer(serializers.ModelSerializer):
     class Meta:
         model = PCBuild
         fields = "__all__"
+        read_only_fields = ("user",)

@@ -229,11 +229,11 @@ exam_week3/
 
 ### Permissions
 
-- [ ] `IsAuthenticated` не применён.
-- [ ] `AllowAny` не применён.
+- [x] `IsAuthenticated` применён к личным данным.
+- [x] `AllowAny` применён к регистрации и чтению каталога.
 - [x] Написаны простые permissions для Manager/Admin.
 - [x] Написан `IsOwnerOrReadOnly`.
-- [ ] Querysets не фильтруются по текущему user.
+- [x] Личные querysets фильтруются по текущему user.
 
 ### Business logic
 
@@ -283,7 +283,7 @@ exam_week3/
 | Views / ViewSets | DONE |
 | URLs без Router | DONE |
 | JWT | BASIC DONE |
-| Permissions | NOT DONE |
+| Permissions | BASIC DONE |
 | Product API | NOT DONE |
 | Reviews API | NOT DONE |
 | Wishlist API | NOT DONE |
@@ -304,9 +304,8 @@ exam_week3/
 
 Логичный следующий шаг:
 
-1. Применить permissions к ViewSet.
-2. Фильтровать личные данные по текущему пользователю.
-3. Добавить тесты API.
+1. Добавить тесты permissions и CRUD.
+2. Добавить profile endpoint.
 
 ---
 
