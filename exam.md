@@ -216,7 +216,7 @@ exam_week3/
 - [x] Принято решение не использовать `router`.
 - [x] API URLs написаны вручную через `path()` и `as_view()`.
 - [x] Базовые CRUD endpoints подключены.
-- [ ] Поиск, фильтры, ordering и pagination не написаны.
+- [x] Добавлены поиск, простые фильтры, ordering и pagination товаров.
 
 ### Authentication
 
@@ -306,8 +306,8 @@ exam_week3/
 
 Логичный следующий шаг:
 
-1. Добавить поиск, фильтры и pagination.
-2. Добавить Swagger.
+1. Добавить Swagger.
+2. Добавить автоматический расчёт цены PCBuild.
 
 ---
 

@@ -1,6 +1,7 @@
 from django.db import transaction
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
+from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -56,19 +57,19 @@ class LogoutView(APIView):
 
 
 class RegisterViewSet(ModelViewSet):
-    queryset = CustomUser.objects.all()
+    queryset = CustomUser.objects.all().order_by("id")
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny]
 
 
 class CustomUserViewSet(ModelViewSet):
-    queryset = CustomUser.objects.all()
+    queryset = CustomUser.objects.all().order_by("id")
     serializer_class = CustomUserSerializer
     permission_classes = [IsAdmin]
 
 
 class ProfileViewSet(ModelViewSet):
-    queryset = CustomUser.objects.all()
+    queryset = CustomUser.objects.all().order_by("id")
     serializer_class = ProfileSerializer
     permission_classes = [IsAuthenticated]
 
@@ -77,7 +78,7 @@ class ProfileViewSet(ModelViewSet):
 
 
 class CategoryViewSet(ModelViewSet):
-    queryset = Category.objects.all()
+    queryset = Category.objects.all().order_by("id")
     serializer_class = CategorySerializer
 
     def get_permissions(self):
@@ -89,8 +90,35 @@ class CategoryViewSet(ModelViewSet):
 
 
 class ProductViewSet(ModelViewSet):
-    queryset = Product.objects.all()
+    queryset = Product.objects.all().order_by("id")
     serializer_class = ProductSerializer
+    filter_backends = [SearchFilter, OrderingFilter]
+    search_fields = ["name", "description", "brand"]
+    ordering_fields = ["name", "price", "stock"]
+
+    def get_queryset(self):
+        queryset = Product.objects.all().order_by("id")
+        category = self.request.query_params.get("category")
+        product_type = self.request.query_params.get("product_type")
+        brand = self.request.query_params.get("brand")
+        min_price = self.request.query_params.get("min_price")
+        max_price = self.request.query_params.get("max_price")
+        in_stock = self.request.query_params.get("in_stock")
+
+        if category:
+            queryset = queryset.filter(category_id=category)
+        if product_type:
+            queryset = queryset.filter(product_type=product_type)
+        if brand:
+            queryset = queryset.filter(brand__iexact=brand)
+        if min_price:
+            queryset = queryset.filter(price__gte=min_price)
+        if max_price:
+            queryset = queryset.filter(price__lte=max_price)
+        if in_stock == "true":
+            queryset = queryset.filter(stock__gt=0)
+
+        return queryset
 
     def get_permissions(self):
         if self.request.method == "GET":
@@ -101,7 +129,7 @@ class ProductViewSet(ModelViewSet):
 
 
 class ReviewViewSet(ModelViewSet):
-    queryset = Review.objects.all()
+    queryset = Review.objects.all().order_by("id")
     serializer_class = ReviewSerializer
 
     def get_permissions(self):
@@ -114,48 +142,48 @@ class ReviewViewSet(ModelViewSet):
 
 
 class WishlistViewSet(ModelViewSet):
-    queryset = Wishlist.objects.all()
+    queryset = Wishlist.objects.all().order_by("id")
     serializer_class = WishlistSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Wishlist.objects.filter(user=self.request.user)
+        return Wishlist.objects.filter(user=self.request.user).order_by("id")
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
 
 class CompareItemViewSet(ModelViewSet):
-    queryset = CompareItem.objects.all()
+    queryset = CompareItem.objects.all().order_by("id")
     serializer_class = CompareItemSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return CompareItem.objects.filter(user=self.request.user)
+        return CompareItem.objects.filter(user=self.request.user).order_by("id")
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
 
 class CartViewSet(ModelViewSet):
-    queryset = Cart.objects.all()
+    queryset = Cart.objects.all().order_by("id")
     serializer_class = CartSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Cart.objects.filter(user=self.request.user)
+        return Cart.objects.filter(user=self.request.user).order_by("id")
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
 
 class CartItemViewSet(ModelViewSet):
-    queryset = CartItem.objects.all()
+    queryset = CartItem.objects.all().order_by("id")
     serializer_class = CartItemSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return CartItem.objects.filter(cart__user=self.request.user)
+        return CartItem.objects.filter(cart__user=self.request.user).order_by("id")
 
     def perform_create(self, serializer):
         cart, created = Cart.objects.get_or_create(user=self.request.user)
@@ -182,12 +210,12 @@ class CartItemViewSet(ModelViewSet):
 
 
 class OrderViewSet(ModelViewSet):
-    queryset = Order.objects.all()
+    queryset = Order.objects.all().order_by("id")
     serializer_class = OrderSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Order.objects.filter(user=self.request.user)
+        return Order.objects.filter(user=self.request.user).order_by("id")
 
     def perform_create(self, serializer):
         with transaction.atomic():
@@ -221,20 +249,20 @@ class OrderViewSet(ModelViewSet):
 
 
 class OrderItemViewSet(ModelViewSet):
-    queryset = OrderItem.objects.all()
+    queryset = OrderItem.objects.all().order_by("id")
     serializer_class = OrderItemSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return OrderItem.objects.filter(order__user=self.request.user)
+        return OrderItem.objects.filter(order__user=self.request.user).order_by("id")
 
 class PCBuildViewSet(ModelViewSet):
-    queryset = PCBuild.objects.all()
+    queryset = PCBuild.objects.all().order_by("id")
     serializer_class = PCBuildSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return PCBuild.objects.filter(user=self.request.user)
+        return PCBuild.objects.filter(user=self.request.user).order_by("id")
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)

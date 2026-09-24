@@ -87,7 +87,7 @@ class ApiTests(APITestCase):
         response = self.client.get("/api/carts/")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
+        self.assertEqual(len(response.data["results"]), 1)
 
     def test_cart_checks_stock_and_calculates_total(self):
         category = Category.objects.create(name="Processors")
@@ -119,8 +119,9 @@ class ApiTests(APITestCase):
         self.assertEqual(second_response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(no_stock_response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(CartItem.objects.get().quantity, 3)
-        self.assertEqual(cart_response.data[0]["subtotal"], 300)
-        self.assertEqual(cart_response.data[0]["total_items"], 3)
+        cart = cart_response.data["results"][0]
+        self.assertEqual(cart["subtotal"], 300)
+        self.assertEqual(cart["total_items"], 3)
 
         clear_response = self.client.delete("/api/cart/clear/")
 
@@ -161,3 +162,30 @@ class ApiTests(APITestCase):
         self.assertEqual(product.stock, 3)
         self.assertEqual(CartItem.objects.count(), 0)
         self.assertEqual(OrderItem.objects.count(), 1)
+
+    def test_product_search_filter_and_pagination(self):
+        category = Category.objects.create(name="Storage")
+        Product.objects.create(
+            category=category,
+            name="Fast SSD",
+            brand="TestBrand",
+            product_type="storage",
+            price="250.00",
+            stock=4,
+        )
+        Product.objects.create(
+            category=category,
+            name="Old HDD",
+            brand="OtherBrand",
+            product_type="storage",
+            price="100.00",
+            stock=0,
+        )
+
+        response = self.client.get(
+            "/api/products/?search=SSD&brand=TestBrand&in_stock=true"
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 1)
+        self.assertEqual(response.data["results"][0]["name"], "Fast SSD")
