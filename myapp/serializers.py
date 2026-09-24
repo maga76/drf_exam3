@@ -122,10 +122,28 @@ class CartItemSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
+    items = serializers.SerializerMethodField()
+
     class Meta:
         model = Order
-        fields = "__all__"
-        read_only_fields = ("user",)
+        fields = (
+            "id",
+            "user",
+            "status",
+            "first_name",
+            "last_name",
+            "phone",
+            "city",
+            "address",
+            "total",
+            "created_at",
+            "items",
+        )
+        read_only_fields = ("user", "status", "total", "created_at")
+
+    def get_items(self, obj):
+        items = obj.orderitem_set.all()
+        return OrderItemSerializer(items, many=True).data
 
 
 class OrderItemSerializer(serializers.ModelSerializer):

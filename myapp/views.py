@@ -1,5 +1,6 @@
+from django.db import transaction
 from rest_framework import status
-from rest_framework.exceptions import PermissionDenied, ValidationError
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -189,7 +190,34 @@ class OrderViewSet(ModelViewSet):
         return Order.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        with transaction.atomic():
+            cart = Cart.objects.filter(user=self.request.user).first()
+            if not cart or not cart.cartitem_set.exists():
+                raise ValidationError("Cart is empty")
+
+            cart_items = cart.cartitem_set.select_related("product")
+            total = 0
+
+            for item in cart_items:
+                if item.quantity > item.product.stock:
+                    raise ValidationError(
+                        f"Not enough {item.product.name} in stock"
+                    )
+                total += item.product.price * item.quantity
+
+            order = serializer.save(user=self.request.user, total=total)
+
+            for item in cart_items:
+                OrderItem.objects.create(
+                    order=order,
+                    product=item.product,
+                    price=item.product.price,
+                    quantity=item.quantity,
+                )
+                item.product.stock -= item.quantity
+                item.product.save()
+
+            cart.cartitem_set.all().delete()
 
 
 class OrderItemViewSet(ModelViewSet):
@@ -199,13 +227,6 @@ class OrderItemViewSet(ModelViewSet):
 
     def get_queryset(self):
         return OrderItem.objects.filter(order__user=self.request.user)
-
-    def perform_create(self, serializer):
-        order = serializer.validated_data["order"]
-        if order.user != self.request.user:
-            raise PermissionDenied("This order belongs to another user")
-        serializer.save()
-
 
 class PCBuildViewSet(ModelViewSet):
     queryset = PCBuild.objects.all()

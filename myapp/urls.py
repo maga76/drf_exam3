@@ -44,8 +44,8 @@ urlpatterns = [
     path("cart/clear/", CartItemViewSet.as_view({"delete": "clear"})),
     path("orders/", OrderViewSet.as_view({"get": "list", "post": "create"})),
     path("orders/<int:pk>/", OrderViewSet.as_view({"get": "retrieve", "put": "update", "patch": "partial_update", "delete": "destroy"})),
-    path("order-items/", OrderItemViewSet.as_view({"get": "list", "post": "create"})),
-    path("order-items/<int:pk>/", OrderItemViewSet.as_view({"get": "retrieve", "put": "update", "patch": "partial_update", "delete": "destroy"})),
+    path("order-items/", OrderItemViewSet.as_view({"get": "list"})),
+    path("order-items/<int:pk>/", OrderItemViewSet.as_view({"get": "retrieve"})),
     path("pc-builds/", PCBuildViewSet.as_view({"get": "list", "post": "create"})),
     path("pc-builds/<int:pk>/", PCBuildViewSet.as_view({"get": "retrieve", "put": "update", "patch": "partial_update", "delete": "destroy"})),
 ]

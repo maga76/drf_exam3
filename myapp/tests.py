@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from .models import Cart, CartItem, Category, CustomUser, Product
+from .models import Cart, CartItem, Category, CustomUser, OrderItem, Product
 
 
 class ApiTests(APITestCase):
@@ -126,3 +126,38 @@ class ApiTests(APITestCase):
 
         self.assertEqual(clear_response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(CartItem.objects.count(), 0)
+
+    def test_order_is_created_from_cart(self):
+        category = Category.objects.create(name="Video cards")
+        product = Product.objects.create(
+            category=category,
+            name="Test GPU",
+            brand="Test",
+            product_type="gpu",
+            price="500.00",
+            stock=5,
+        )
+        cart = Cart.objects.create(user=self.user)
+        CartItem.objects.create(cart=cart, product=product, quantity=2)
+        self.client.force_authenticate(self.user)
+
+        response = self.client.post(
+            "/api/orders/",
+            {
+                "first_name": "Test",
+                "last_name": "User",
+                "phone": "900000000",
+                "city": "Dushanbe",
+                "address": "Test address",
+                "total": "1.00",
+                "status": "delivered",
+            },
+        )
+        product.refresh_from_db()
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data["status"], "pending")
+        self.assertEqual(response.data["total"], "1000.00")
+        self.assertEqual(product.stock, 3)
+        self.assertEqual(CartItem.objects.count(), 0)
+        self.assertEqual(OrderItem.objects.count(), 1)
