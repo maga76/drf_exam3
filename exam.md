@@ -254,7 +254,7 @@ exam_week3/
 - [ ] Swagger не подключён.
 - [ ] Redoc не подключён.
 - [ ] JWT Authorize в Swagger не настроен.
-- [ ] Тесты не написаны.
+- [x] Написаны базовые тесты регистрации, JWT, каталога, ролей и корзины.
 - [ ] README с командами запуска не создан.
 - [ ] Server не запускался для финальной проверки.
 
@@ -294,7 +294,7 @@ exam_week3/
 | Compatibility | NOT DONE |
 | Recommendations | NOT DONE |
 | Swagger | NOT DONE |
-| Tests | NOT DONE |
+| Tests | BASIC DONE |
 | Frontend | NOT STARTED |
 | 3D viewer | NOT STARTED |
 
@@ -304,8 +304,8 @@ exam_week3/
 
 Логичный следующий шаг:
 
-1. Добавить тесты permissions и CRUD.
-2. Добавить profile endpoint.
+1. Добавить profile endpoint.
+2. Добавить бизнес-логику корзины и заказов.
 
 ---
 
