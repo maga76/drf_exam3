@@ -7,6 +7,7 @@ from .views import (
     CategoryViewSet,
     CompareItemViewSet,
     CustomUserViewSet,
+    LogoutView,
     OrderItemViewSet,
     OrderViewSet,
     PCBuildViewSet,
@@ -20,6 +21,7 @@ from .views import (
 urlpatterns = [
     path("register/", RegisterViewSet.as_view({"post": "create"})),
     path("login/", TokenObtainPairView.as_view()),
+    path("logout/", LogoutView.as_view()),
     path("token/refresh/", TokenRefreshView.as_view()),
     path("users/", CustomUserViewSet.as_view({"get": "list", "post": "create"})),
     path("users/<int:pk>/", CustomUserViewSet.as_view({"get": "retrieve", "put": "update", "patch": "partial_update", "delete": "destroy"})),

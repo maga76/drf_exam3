@@ -1,4 +1,10 @@
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
+from rest_framework_simplejwt.exceptions import TokenError
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import (
     Cart,
@@ -27,6 +33,22 @@ from .serializers import (
     ReviewSerializer,
     WishlistSerializer,
 )
+
+
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        try:
+            refresh_token = request.data["refresh"]
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response(status=status.HTTP_205_RESET_CONTENT)
+        except (KeyError, TokenError):
+            return Response(
+                {"error": "Invalid refresh token"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
 
 class RegisterViewSet(ModelViewSet):

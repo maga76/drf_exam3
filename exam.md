@@ -224,7 +224,7 @@ exam_week3/
 - [x] Login endpoint написан.
 - [x] JWT authentication настроена.
 - [x] Access/refresh tokens подключены.
-- [ ] Logout и blacklist не написаны.
+- [x] Logout и blacklist написаны.
 - [ ] Profile endpoint не написан.
 
 ### Permissions
@@ -304,9 +304,8 @@ exam_week3/
 
 Логичный следующий шаг:
 
-1. Добавить logout через blacklist.
-2. Настроить permissions.
-3. Добавить тесты API.
+1. Настроить permissions.
+2. Добавить тесты API.
 
 ---
 
