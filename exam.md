@@ -214,8 +214,8 @@ exam_week3/
 - [x] Для текущих моделей написаны простые `ModelSerializer`.
 - [x] Для текущих моделей написаны простые `ModelViewSet`.
 - [x] Принято решение не использовать `router`.
-- [ ] API URLs не созданы. Их нужно написать вручную через `path()` и `as_view()`.
-- [ ] CRUD endpoints не работают.
+- [x] API URLs написаны вручную через `path()` и `as_view()`.
+- [x] Базовые CRUD endpoints подключены.
 - [ ] Поиск, фильтры, ordering и pagination не написаны.
 
 ### Authentication
@@ -281,7 +281,7 @@ exam_week3/
 | Admin | DONE |
 | Serializers | DONE |
 | Views / ViewSets | DONE |
-| URLs без Router | NOT DONE |
+| URLs без Router | DONE |
 | JWT | NOT DONE |
 | Permissions | NOT DONE |
 | Product API | NOT DONE |
@@ -304,8 +304,8 @@ exam_week3/
 
 Логичный следующий шаг:
 
-1. Подключить `ModelViewSet` вручную в `urls.py` без `router`.
-2. Проверить CRUD endpoints.
+1. Добавить тесты для CRUD endpoints.
+2. После этого настроить регистрацию и JWT.
 
 ---
 
