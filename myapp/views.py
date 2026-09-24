@@ -279,4 +279,16 @@ class PCBuildViewSet(ModelViewSet):
         return PCBuild.objects.filter(user=self.request.user).order_by("id")
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        fields = ("cpu", "gpu", "motherboard", "ram", "storage", "psu", "case")
+        total_price = sum(
+            serializer.validated_data[field].price for field in fields
+        )
+        serializer.save(user=self.request.user, total_price=total_price)
+
+    def perform_update(self, serializer):
+        fields = ("cpu", "gpu", "motherboard", "ram", "storage", "psu", "case")
+        total_price = sum(
+            serializer.validated_data.get(field, getattr(serializer.instance, field)).price
+            for field in fields
+        )
+        serializer.save(total_price=total_price)

@@ -156,4 +156,46 @@ class PCBuildSerializer(serializers.ModelSerializer):
     class Meta:
         model = PCBuild
         fields = "__all__"
-        read_only_fields = ("user",)
+        read_only_fields = ("user", "total_price")
+
+    def validate(self, data):
+        fields = (
+            "cpu",
+            "gpu",
+            "motherboard",
+            "ram",
+            "storage",
+            "psu",
+            "case",
+        )
+        parts = {}
+
+        for field in fields:
+            part = data.get(field)
+            if self.instance:
+                part = part or getattr(self.instance, field)
+            parts[field] = part
+
+        errors = []
+
+        for field, part in parts.items():
+            if part and part.product_type != field:
+                errors.append(f"{field} has the wrong product type")
+
+        cpu = parts["cpu"]
+        motherboard = parts["motherboard"]
+        ram = parts["ram"]
+        gpu = parts["gpu"]
+        psu = parts["psu"]
+
+        if cpu and motherboard and cpu.socket != motherboard.socket:
+            errors.append("CPU socket does not match motherboard")
+        if ram and motherboard and ram.ram_type != motherboard.ram_type:
+            errors.append("RAM type does not match motherboard")
+        if gpu and psu and psu.wattage < gpu.recommended_psu:
+            errors.append("PSU is too weak for GPU")
+
+        if errors:
+            raise serializers.ValidationError(errors)
+
+        return data

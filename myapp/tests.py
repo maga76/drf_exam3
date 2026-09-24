@@ -189,3 +189,61 @@ class ApiTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["count"], 1)
         self.assertEqual(response.data["results"][0]["name"], "Fast SSD")
+
+    def test_pc_build_total_and_compatibility(self):
+        category = Category.objects.create(name="PC parts")
+
+        def create_part(name, product_type, price, **fields):
+            return Product.objects.create(
+                category=category,
+                name=name,
+                brand="Test",
+                product_type=product_type,
+                price=price,
+                stock=1,
+                **fields,
+            )
+
+        cpu = create_part("CPU", "cpu", "10.00", socket="AM5")
+        gpu = create_part("GPU", "gpu", "20.00", recommended_psu=600)
+        motherboard = create_part(
+            "Motherboard",
+            "motherboard",
+            "30.00",
+            socket="AM5",
+            ram_type="DDR5",
+        )
+        ram = create_part("RAM", "ram", "40.00", ram_type="DDR5")
+        storage = create_part("SSD", "storage", "50.00")
+        psu = create_part("PSU", "psu", "60.00", wattage=750)
+        case = create_part("Case", "case", "70.00")
+        wrong_motherboard = create_part(
+            "Wrong motherboard",
+            "motherboard",
+            "30.00",
+            socket="LGA1700",
+            ram_type="DDR5",
+        )
+        data = {
+            "name": "My PC",
+            "cpu": cpu.id,
+            "gpu": gpu.id,
+            "motherboard": motherboard.id,
+            "ram": ram.id,
+            "storage": storage.id,
+            "psu": psu.id,
+            "case": case.id,
+            "total_price": "1.00",
+        }
+        self.client.force_authenticate(self.user)
+
+        response = self.client.post("/api/pc-builds/", data)
+        data["motherboard"] = wrong_motherboard.id
+        incompatible_response = self.client.post("/api/pc-builds/", data)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data["total_price"], "280.00")
+        self.assertEqual(
+            incompatible_response.status_code,
+            status.HTTP_400_BAD_REQUEST,
+        )
