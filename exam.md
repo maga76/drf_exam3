@@ -231,8 +231,8 @@ exam_week3/
 
 - [ ] `IsAuthenticated` не применён.
 - [ ] `AllowAny` не применён.
-- [ ] Manager/Admin permissions не написаны.
-- [ ] Owner permissions не написаны.
+- [x] Написаны простые permissions для Manager/Admin.
+- [x] Написан `IsOwnerOrReadOnly`.
 - [ ] Querysets не фильтруются по текущему user.
 
 ### Business logic
@@ -304,8 +304,9 @@ exam_week3/
 
 Логичный следующий шаг:
 
-1. Настроить permissions.
-2. Добавить тесты API.
+1. Применить permissions к ViewSet.
+2. Фильтровать личные данные по текущему пользователю.
+3. Добавить тесты API.
 
 ---
 
