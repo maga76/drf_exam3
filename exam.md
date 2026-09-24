@@ -204,7 +204,7 @@ exam_week3/
 
 ### Django Admin
 
-- [ ] Модели не зарегистрированы в `admin.py`.
+- [x] Все текущие модели зарегистрированы в `admin.py`.
 - [ ] Superuser не создан в текущей версии базы.
 
 ### API
@@ -278,7 +278,7 @@ exam_week3/
 | Settings | BASIC DONE |
 | Models | FIRST SIMPLE VERSION DONE |
 | Migrations for current models | DONE |
-| Admin | NOT DONE |
+| Admin | DONE |
 | Serializers | NOT DONE |
 | Views / ViewSets | NOT DONE |
 | URLs без Router | NOT DONE |
@@ -304,8 +304,8 @@ exam_week3/
 
 Логичный следующий шаг:
 
-1. Зарегистрировать модели в `admin.py`.
-2. Только после этого переходить к serializers и API.
+1. Создать serializers.
+2. После этого написать API.
 
 ---
 
