@@ -225,7 +225,7 @@ exam_week3/
 - [x] JWT authentication настроена.
 - [x] Access/refresh tokens подключены.
 - [x] Logout и blacklist написаны.
-- [ ] Profile endpoint не написан.
+- [x] Profile endpoint написан.
 
 ### Permissions
 
@@ -304,8 +304,8 @@ exam_week3/
 
 Логичный следующий шаг:
 
-1. Добавить profile endpoint.
-2. Добавить бизнес-логику корзины и заказов.
+1. Добавить бизнес-логику корзины и заказов.
+2. Добавить поиск, фильтры и pagination.
 
 ---
 

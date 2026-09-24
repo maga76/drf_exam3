@@ -45,6 +45,19 @@ class ApiTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    def test_user_can_update_profile_but_not_role(self):
+        self.client.force_authenticate(self.user)
+
+        response = self.client.patch(
+            "/api/profile/",
+            {"phone": "900000000", "role": "admin"},
+        )
+        self.user.refresh_from_db()
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(self.user.phone, "900000000")
+        self.assertEqual(self.user.role, "user")
+
     def test_manager_can_create_category_but_cannot_delete_it(self):
         self.client.force_authenticate(self.manager)
         create_response = self.client.post(

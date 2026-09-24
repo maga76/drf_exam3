@@ -30,6 +30,7 @@ from .serializers import (
     OrderItemSerializer,
     OrderSerializer,
     PCBuildSerializer,
+    ProfileSerializer,
     ProductSerializer,
     RegisterSerializer,
     ReviewSerializer,
@@ -63,6 +64,15 @@ class CustomUserViewSet(ModelViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
     permission_classes = [IsAdmin]
+
+
+class ProfileViewSet(ModelViewSet):
+    queryset = CustomUser.objects.all()
+    serializer_class = ProfileSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
 
 
 class CategoryViewSet(ModelViewSet):
