@@ -212,7 +212,7 @@ exam_week3/
 - [x] Django REST Framework подключён в `INSTALLED_APPS`.
 - [x] Создан `serializers.py`.
 - [x] Для текущих моделей написаны простые `ModelSerializer`.
-- [ ] `ModelViewSet` не написаны.
+- [x] Для текущих моделей написаны простые `ModelViewSet`.
 - [x] Принято решение не использовать `router`.
 - [ ] API URLs не созданы. Их нужно написать вручную через `path()` и `as_view()`.
 - [ ] CRUD endpoints не работают.
@@ -280,7 +280,7 @@ exam_week3/
 | Migrations for current models | DONE |
 | Admin | DONE |
 | Serializers | DONE |
-| Views / ViewSets | NOT DONE |
+| Views / ViewSets | DONE |
 | URLs без Router | NOT DONE |
 | JWT | NOT DONE |
 | Permissions | NOT DONE |
@@ -304,8 +304,8 @@ exam_week3/
 
 Логичный следующий шаг:
 
-1. Написать простые `ModelViewSet`.
-2. Подключить их вручную в `urls.py` без `router`.
+1. Подключить `ModelViewSet` вручную в `urls.py` без `router`.
+2. Проверить CRUD endpoints.
 
 ---
 
