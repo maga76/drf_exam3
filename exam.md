@@ -197,10 +197,10 @@ exam_week3/
 ### Database
 
 - [x] Создана migration `myapp/migrations/0001_initial.py` для текущего `models.py`.
-- [ ] Текущие модели не применены к `db.sqlite3`.
-- [ ] Тестовые данны не созданы.
+- [x] Текущие модели применены к новой `db.sqlite3`.
+- [ ] Тестовые данные не созданы.
 
-Важно: файл `db.sqlite3` существует, но он был создан до последнего упрощения `models.py`. Поэтому его схема может не совпадать с текущими моделями.
+Старая несовместимая база сохранена локально в `db_before_new_migrations.sqlite3`. Она не отправляется в GitHub.
 
 ### Django Admin
 
@@ -277,7 +277,7 @@ exam_week3/
 | `myapp` | DONE |
 | Settings | BASIC DONE |
 | Models | FIRST SIMPLE VERSION DONE |
-| Migrations for current models | CREATED, NOT APPLIED |
+| Migrations for current models | DONE |
 | Admin | NOT DONE |
 | Serializers | NOT DONE |
 | Views / ViewSets | NOT DONE |
@@ -304,9 +304,8 @@ exam_week3/
 
 Логичный следующий шаг:
 
-1. Выполнить `python manage.py migrate`.
-2. Зарегистрировать модели в `admin.py`.
-3. Только после этого переходить к serializers и API.
+1. Зарегистрировать модели в `admin.py`.
+2. Только после этого переходить к serializers и API.
 
 ---
 
