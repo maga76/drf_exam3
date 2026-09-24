@@ -220,10 +220,10 @@ exam_week3/
 
 ### Authentication
 
-- [ ] Register endpoint не написан.
-- [ ] Login endpoint не написан.
-- [ ] JWT authentication не настроена.
-- [ ] Access/refresh tokens не подключены.
+- [x] Register endpoint написан.
+- [x] Login endpoint написан.
+- [x] JWT authentication настроена.
+- [x] Access/refresh tokens подключены.
 - [ ] Logout и blacklist не написаны.
 - [ ] Profile endpoint не написан.
 
@@ -282,7 +282,7 @@ exam_week3/
 | Serializers | DONE |
 | Views / ViewSets | DONE |
 | URLs без Router | DONE |
-| JWT | NOT DONE |
+| JWT | BASIC DONE |
 | Permissions | NOT DONE |
 | Product API | NOT DONE |
 | Reviews API | NOT DONE |
@@ -304,8 +304,9 @@ exam_week3/
 
 Логичный следующий шаг:
 
-1. Добавить тесты для CRUD endpoints.
-2. После этого настроить регистрацию и JWT.
+1. Добавить logout через blacklist.
+2. Настроить permissions.
+3. Добавить тесты API.
 
 ---
 

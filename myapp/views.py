@@ -23,9 +23,15 @@ from .serializers import (
     OrderSerializer,
     PCBuildSerializer,
     ProductSerializer,
+    RegisterSerializer,
     ReviewSerializer,
     WishlistSerializer,
 )
+
+
+class RegisterViewSet(ModelViewSet):
+    queryset = CustomUser.objects.all()
+    serializer_class = RegisterSerializer
 
 
 class CustomUserViewSet(ModelViewSet):
