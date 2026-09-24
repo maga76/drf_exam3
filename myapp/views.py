@@ -147,6 +147,8 @@ class WishlistViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return Wishlist.objects.none()
         return Wishlist.objects.filter(user=self.request.user).order_by("id")
 
     def perform_create(self, serializer):
@@ -159,6 +161,8 @@ class CompareItemViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return CompareItem.objects.none()
         return CompareItem.objects.filter(user=self.request.user).order_by("id")
 
     def perform_create(self, serializer):
@@ -171,6 +175,8 @@ class CartViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return Cart.objects.none()
         return Cart.objects.filter(user=self.request.user).order_by("id")
 
     def perform_create(self, serializer):
@@ -183,6 +189,8 @@ class CartItemViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return CartItem.objects.none()
         return CartItem.objects.filter(cart__user=self.request.user).order_by("id")
 
     def perform_create(self, serializer):
@@ -215,6 +223,8 @@ class OrderViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return Order.objects.none()
         return Order.objects.filter(user=self.request.user).order_by("id")
 
     def perform_create(self, serializer):
@@ -254,6 +264,8 @@ class OrderItemViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return OrderItem.objects.none()
         return OrderItem.objects.filter(order__user=self.request.user).order_by("id")
 
 class PCBuildViewSet(ModelViewSet):
@@ -262,6 +274,8 @@ class PCBuildViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return PCBuild.objects.none()
         return PCBuild.objects.filter(user=self.request.user).order_by("id")
 
     def perform_create(self, serializer):

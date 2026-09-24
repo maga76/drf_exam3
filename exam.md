@@ -253,9 +253,9 @@ exam_week3/
 
 ### Documentation and tests
 
-- [ ] Swagger не подключён.
-- [ ] Redoc не подключён.
-- [ ] JWT Authorize в Swagger не настроен.
+- [x] Swagger подключён.
+- [x] ReDoc подключён.
+- [x] JWT Authorize в Swagger настроен.
 - [x] Написаны базовые тесты регистрации, JWT, каталога, ролей и корзины.
 - [ ] README с командами запуска не создан.
 - [ ] Server не запускался для финальной проверки.
@@ -295,7 +295,7 @@ exam_week3/
 | PC Builder API | NOT DONE |
 | Compatibility | NOT DONE |
 | Recommendations | NOT DONE |
-| Swagger | NOT DONE |
+| Swagger | DONE |
 | Tests | BASIC DONE |
 | Frontend | NOT STARTED |
 | 3D viewer | NOT STARTED |
@@ -306,8 +306,8 @@ exam_week3/
 
 Логичный следующий шаг:
 
-1. Добавить Swagger.
-2. Добавить автоматический расчёт цены PCBuild.
+1. Добавить автоматический расчёт цены PCBuild.
+2. Добавить проверку совместимости деталей.
 
 ---
 
