@@ -1,5 +1,5 @@
 from rest_framework import status
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -157,10 +157,27 @@ class CartItemViewSet(ModelViewSet):
         return CartItem.objects.filter(cart__user=self.request.user)
 
     def perform_create(self, serializer):
-        cart = serializer.validated_data["cart"]
-        if cart.user != self.request.user:
-            raise PermissionDenied("This cart belongs to another user")
-        serializer.save()
+        cart, created = Cart.objects.get_or_create(user=self.request.user)
+        product = serializer.validated_data["product"]
+        quantity = serializer.validated_data.get("quantity", 1)
+        item, created = CartItem.objects.get_or_create(
+            cart=cart,
+            product=product,
+            defaults={"quantity": quantity},
+        )
+
+        if not created:
+            new_quantity = item.quantity + quantity
+            if new_quantity > product.stock:
+                raise ValidationError("Not enough product in stock")
+            item.quantity = new_quantity
+            item.save()
+
+        serializer.instance = item
+
+    def clear(self, request):
+        self.get_queryset().delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class OrderViewSet(ModelViewSet):

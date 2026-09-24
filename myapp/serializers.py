@@ -74,16 +74,51 @@ class CompareItemSerializer(serializers.ModelSerializer):
 
 
 class CartSerializer(serializers.ModelSerializer):
+    items = serializers.SerializerMethodField()
+    subtotal = serializers.SerializerMethodField()
+    total_items = serializers.SerializerMethodField()
+
     class Meta:
         model = Cart
-        fields = "__all__"
+        fields = ("id", "user", "items", "subtotal", "total_items")
         read_only_fields = ("user",)
+
+    def get_items(self, obj):
+        items = obj.cartitem_set.all()
+        return CartItemSerializer(items, many=True).data
+
+    def get_subtotal(self, obj):
+        return sum(item.product.price * item.quantity for item in obj.cartitem_set.all())
+
+    def get_total_items(self, obj):
+        return sum(item.quantity for item in obj.cartitem_set.all())
 
 
 class CartItemSerializer(serializers.ModelSerializer):
+    item_total = serializers.SerializerMethodField()
+
     class Meta:
         model = CartItem
-        fields = "__all__"
+        fields = ("id", "cart", "product", "quantity", "item_total")
+        read_only_fields = ("cart",)
+
+    def get_item_total(self, obj):
+        return obj.product.price * obj.quantity
+
+    def validate(self, data):
+        product = data.get("product")
+        quantity = data.get("quantity", 1)
+
+        if self.instance:
+            product = product or self.instance.product
+            quantity = data.get("quantity", self.instance.quantity)
+
+        if quantity < 1:
+            raise serializers.ValidationError("Quantity must be at least 1")
+        if quantity > product.stock:
+            raise serializers.ValidationError("Not enough product in stock")
+
+        return data
 
 
 class OrderSerializer(serializers.ModelSerializer):

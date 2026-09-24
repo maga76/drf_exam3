@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from .models import Cart, Category, CustomUser
+from .models import Cart, CartItem, Category, CustomUser, Product
 
 
 class ApiTests(APITestCase):
@@ -88,3 +88,41 @@ class ApiTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
+
+    def test_cart_checks_stock_and_calculates_total(self):
+        category = Category.objects.create(name="Processors")
+        product = Product.objects.create(
+            category=category,
+            name="Test CPU",
+            brand="Test",
+            product_type="cpu",
+            price="100.00",
+            stock=3,
+        )
+        self.client.force_authenticate(self.user)
+
+        first_response = self.client.post(
+            "/api/cart-items/",
+            {"product": product.id, "quantity": 2},
+        )
+        second_response = self.client.post(
+            "/api/cart-items/",
+            {"product": product.id, "quantity": 1},
+        )
+        no_stock_response = self.client.post(
+            "/api/cart-items/",
+            {"product": product.id, "quantity": 1},
+        )
+        cart_response = self.client.get("/api/carts/")
+
+        self.assertEqual(first_response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(second_response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(no_stock_response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(CartItem.objects.get().quantity, 3)
+        self.assertEqual(cart_response.data[0]["subtotal"], 300)
+        self.assertEqual(cart_response.data[0]["total_items"], 3)
+
+        clear_response = self.client.delete("/api/cart/clear/")
+
+        self.assertEqual(clear_response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(CartItem.objects.count(), 0)
