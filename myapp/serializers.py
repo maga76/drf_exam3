@@ -210,3 +210,17 @@ class CompatibilitySerializer(serializers.Serializer):
     storage = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
     psu = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
     case = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
+
+
+class LaptopRecommendationSerializer(serializers.Serializer):
+    budget = serializers.DecimalField(max_digits=10, decimal_places=2)
+    good_screen = serializers.BooleanField(default=False)
+    long_battery = serializers.BooleanField(default=False)
+    gaming = serializers.BooleanField(default=False)
+    programming = serializers.BooleanField(default=False)
+
+
+class PCRecommendationSerializer(serializers.Serializer):
+    budget = serializers.DecimalField(max_digits=10, decimal_places=2)
+    gaming = serializers.BooleanField(default=False)
+    programming = serializers.BooleanField(default=False)

@@ -9,9 +9,11 @@ from .views import (
     CompareItemViewSet,
     CustomUserViewSet,
     LogoutView,
+    LaptopRecommendationView,
     OrderItemViewSet,
     OrderViewSet,
     PCBuildViewSet,
+    PCRecommendationView,
     ProfileViewSet,
     ProductViewSet,
     RegisterViewSet,
@@ -22,6 +24,8 @@ from .views import (
 
 urlpatterns = [
     path("compatibility/check/", CompatibilityView.as_view()),
+    path("recommendations/laptops/", LaptopRecommendationView.as_view()),
+    path("recommendations/pc/", PCRecommendationView.as_view()),
     path("register/", RegisterViewSet.as_view({"post": "create"})),
     path("login/", TokenObtainPairView.as_view()),
     path("logout/", LogoutView.as_view()),

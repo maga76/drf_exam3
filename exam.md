@@ -249,8 +249,8 @@ exam_week3/
 - [x] Общая цена PCBuild автоматически считается.
 - [x] При сохранении PCBuild проверяются доступные правила совместимости.
 - [x] Добавлен отдельный compatibility endpoint.
-- [ ] Laptop recommendation не написана.
-- [ ] PC recommendation не написана.
+- [x] Laptop recommendation написана без внешнего AI.
+- [x] PC recommendation написана без внешнего AI.
 
 ### Documentation and tests
 
@@ -295,7 +295,7 @@ exam_week3/
 | Orders API | NOT DONE |
 | PC Builder API | NOT DONE |
 | Compatibility | NOT DONE |
-| Recommendations | NOT DONE |
+| Recommendations | DONE |
 | Swagger | DONE |
 | Tests | BASIC DONE |
 | Frontend | NOT STARTED |
@@ -307,8 +307,8 @@ exam_week3/
 
 Логичный следующий шаг:
 
-1. Добавить рекомендации ноутбуков и ПК.
-2. Добавить управление статусами заказов для Manager/Admin.
+1. Добавить управление статусами заказов для Manager/Admin.
+2. Проверить и дополнить API избранного, сравнения и отзывов.
 
 ---
 

@@ -31,9 +31,11 @@ from .serializers import (
     CompatibilitySerializer,
     CompareItemSerializer,
     CustomUserSerializer,
+    LaptopRecommendationSerializer,
     OrderItemSerializer,
     OrderSerializer,
     PCBuildSerializer,
+    PCRecommendationSerializer,
     ProfileSerializer,
     ProductSerializer,
     RegisterSerializer,
@@ -67,6 +69,145 @@ class CompatibilityView(APIView):
         serializer.is_valid(raise_exception=True)
         errors = check_compatibility(serializer.validated_data)
         return Response({"compatible": not errors, "errors": errors})
+
+
+class LaptopRecommendationView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = LaptopRecommendationSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+        laptops = Product.objects.filter(
+            product_type="laptop",
+            stock__gt=0,
+            price__lte=data["budget"],
+        )
+        results = []
+
+        for laptop in laptops:
+            score = 0
+            reasons = []
+
+            if data["good_screen"]:
+                score += laptop.screen_score
+                reasons.append("Good screen")
+            if data["long_battery"]:
+                score += laptop.battery_score
+                reasons.append("Long battery life")
+            if data["gaming"]:
+                score += laptop.gaming_score
+                reasons.append("Good for gaming")
+            if data["programming"]:
+                score += laptop.performance_score
+                reasons.append("Good for programming")
+
+            results.append(
+                {
+                    "product": ProductSerializer(laptop).data,
+                    "score": score,
+                    "reasons": reasons,
+                }
+            )
+
+        results.sort(key=lambda item: item["score"], reverse=True)
+
+        if not results:
+            return Response(
+                {"results": [], "message": "No suitable products found"}
+            )
+
+        return Response({"results": results[:5]})
+
+
+class PCRecommendationView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = PCRecommendationSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+
+        cpu_order = "-performance_score" if data["programming"] else "price"
+        gpu_order = "-gaming_score" if data["gaming"] else "price"
+        cpus = Product.objects.filter(product_type="cpu", stock__gt=0).order_by(
+            cpu_order, "price"
+        )
+        gpus = Product.objects.filter(product_type="gpu", stock__gt=0).order_by(
+            gpu_order, "price"
+        )
+        storage = Product.objects.filter(
+            product_type="storage", stock__gt=0
+        ).order_by("price").first()
+        case = Product.objects.filter(product_type="case", stock__gt=0).order_by(
+            "price"
+        ).first()
+
+        if not storage or not case:
+            return Response(
+                {
+                    "success": False,
+                    "message": "Could not build a compatible PC within the budget",
+                }
+            )
+
+        for cpu in cpus:
+            motherboard = Product.objects.filter(
+                product_type="motherboard",
+                socket=cpu.socket,
+                stock__gt=0,
+            ).order_by("price").first()
+            if not motherboard:
+                continue
+
+            ram = Product.objects.filter(
+                product_type="ram",
+                ram_type=motherboard.ram_type,
+                stock__gt=0,
+            ).order_by("price").first()
+            if not ram:
+                continue
+
+            for gpu in gpus:
+                psu = Product.objects.filter(
+                    product_type="psu",
+                    wattage__gte=gpu.recommended_psu,
+                    stock__gt=0,
+                ).order_by("price").first()
+                if not psu:
+                    continue
+
+                parts = {
+                    "cpu": cpu,
+                    "gpu": gpu,
+                    "motherboard": motherboard,
+                    "ram": ram,
+                    "storage": storage,
+                    "psu": psu,
+                    "case": case,
+                }
+                total_price = sum(part.price for part in parts.values())
+
+                if total_price <= data["budget"]:
+                    components = {
+                        name: ProductSerializer(part).data
+                        for name, part in parts.items()
+                    }
+                    return Response(
+                        {
+                            "success": True,
+                            "total_price": total_price,
+                            "components": components,
+                            "compatible": True,
+                        }
+                    )
+
+        return Response(
+            {
+                "success": False,
+                "message": "Could not build a compatible PC within the budget",
+            }
+        )
 
 
 class RegisterViewSet(ModelViewSet):

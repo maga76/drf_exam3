@@ -273,3 +273,68 @@ class ApiTests(APITestCase):
             status.HTTP_400_BAD_REQUEST,
         )
         self.assertFalse(incompatible_check.data["compatible"])
+
+    def test_laptop_and_pc_recommendations(self):
+        category = Category.objects.create(name="Recommendation")
+        Product.objects.create(
+            category=category,
+            name="Recommended laptop",
+            brand="Test",
+            product_type="laptop",
+            price="900.00",
+            stock=2,
+            screen_score=9,
+            battery_score=8,
+            performance_score=10,
+            gaming_score=7,
+        )
+
+        laptop_response = self.client.post(
+            "/api/recommendations/laptops/",
+            {
+                "budget": "1000.00",
+                "good_screen": True,
+                "long_battery": True,
+                "programming": True,
+            },
+        )
+
+        def create_part(name, product_type, price, **fields):
+            return Product.objects.create(
+                category=category,
+                name=name,
+                brand="Test",
+                product_type=product_type,
+                price=price,
+                stock=1,
+                **fields,
+            )
+
+        create_part("CPU", "cpu", "10.00", socket="AM5")
+        create_part("GPU", "gpu", "20.00", recommended_psu=600)
+        create_part(
+            "Motherboard",
+            "motherboard",
+            "30.00",
+            socket="AM5",
+            ram_type="DDR5",
+        )
+        create_part("RAM", "ram", "40.00", ram_type="DDR5")
+        create_part("SSD", "storage", "50.00")
+        create_part("PSU", "psu", "60.00", wattage=750)
+        create_part("Case", "case", "70.00")
+
+        pc_response = self.client.post(
+            "/api/recommendations/pc/",
+            {"budget": "300.00", "gaming": True},
+        )
+
+        self.assertEqual(laptop_response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            laptop_response.data["results"][0]["product"]["name"],
+            "Recommended laptop",
+        )
+        self.assertEqual(laptop_response.data["results"][0]["score"], 27)
+        self.assertEqual(pc_response.status_code, status.HTTP_200_OK)
+        self.assertTrue(pc_response.data["success"])
+        self.assertEqual(pc_response.data["total_price"], 280)
