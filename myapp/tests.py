@@ -238,12 +238,38 @@ class ApiTests(APITestCase):
         self.client.force_authenticate(self.user)
 
         response = self.client.post("/api/pc-builds/", data)
+        compatibility_response = self.client.post(
+            "/api/compatibility/check/",
+            {
+                "cpu": cpu.id,
+                "gpu": gpu.id,
+                "motherboard": motherboard.id,
+                "ram": ram.id,
+                "storage": storage.id,
+                "psu": psu.id,
+                "case": case.id,
+            },
+        )
         data["motherboard"] = wrong_motherboard.id
         incompatible_response = self.client.post("/api/pc-builds/", data)
+        incompatible_check = self.client.post(
+            "/api/compatibility/check/",
+            {
+                "cpu": cpu.id,
+                "gpu": gpu.id,
+                "motherboard": wrong_motherboard.id,
+                "ram": ram.id,
+                "storage": storage.id,
+                "psu": psu.id,
+                "case": case.id,
+            },
+        )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data["total_price"], "280.00")
+        self.assertTrue(compatibility_response.data["compatible"])
         self.assertEqual(
             incompatible_response.status_code,
             status.HTTP_400_BAD_REQUEST,
         )
+        self.assertFalse(incompatible_check.data["compatible"])

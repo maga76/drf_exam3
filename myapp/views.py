@@ -24,9 +24,11 @@ from .models import (
 )
 from .permissions import IsAdmin, IsManagerOrAdmin, IsOwnerOrReadOnly
 from .serializers import (
+    BUILD_FIELDS,
     CartItemSerializer,
     CartSerializer,
     CategorySerializer,
+    CompatibilitySerializer,
     CompareItemSerializer,
     CustomUserSerializer,
     OrderItemSerializer,
@@ -37,6 +39,7 @@ from .serializers import (
     RegisterSerializer,
     ReviewSerializer,
     WishlistSerializer,
+    check_compatibility,
 )
 
 
@@ -54,6 +57,16 @@ class LogoutView(APIView):
                 {"error": "Invalid refresh token"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+class CompatibilityView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = CompatibilitySerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        errors = check_compatibility(serializer.validated_data)
+        return Response({"compatible": not errors, "errors": errors})
 
 
 class RegisterViewSet(ModelViewSet):
@@ -279,16 +292,14 @@ class PCBuildViewSet(ModelViewSet):
         return PCBuild.objects.filter(user=self.request.user).order_by("id")
 
     def perform_create(self, serializer):
-        fields = ("cpu", "gpu", "motherboard", "ram", "storage", "psu", "case")
         total_price = sum(
-            serializer.validated_data[field].price for field in fields
+            serializer.validated_data[field].price for field in BUILD_FIELDS
         )
         serializer.save(user=self.request.user, total_price=total_price)
 
     def perform_update(self, serializer):
-        fields = ("cpu", "gpu", "motherboard", "ram", "storage", "psu", "case")
         total_price = sum(
             serializer.validated_data.get(field, getattr(serializer.instance, field)).price
-            for field in fields
+            for field in BUILD_FIELDS
         )
         serializer.save(total_price=total_price)

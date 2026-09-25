@@ -15,6 +15,33 @@ from .models import (
 )
 
 
+BUILD_FIELDS = ("cpu", "gpu", "motherboard", "ram", "storage", "psu", "case")
+
+
+def check_compatibility(parts):
+    errors = []
+
+    for field in BUILD_FIELDS:
+        part = parts.get(field)
+        if part and part.product_type != field:
+            errors.append(f"{field} has the wrong product type")
+
+    cpu = parts.get("cpu")
+    motherboard = parts.get("motherboard")
+    ram = parts.get("ram")
+    gpu = parts.get("gpu")
+    psu = parts.get("psu")
+
+    if cpu and motherboard and cpu.socket != motherboard.socket:
+        errors.append("CPU socket does not match motherboard")
+    if ram and motherboard and ram.ram_type != motherboard.ram_type:
+        errors.append("RAM type does not match motherboard")
+    if gpu and psu and psu.wattage < gpu.recommended_psu:
+        errors.append("PSU is too weak for GPU")
+
+    return errors
+
+
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
@@ -159,43 +186,27 @@ class PCBuildSerializer(serializers.ModelSerializer):
         read_only_fields = ("user", "total_price")
 
     def validate(self, data):
-        fields = (
-            "cpu",
-            "gpu",
-            "motherboard",
-            "ram",
-            "storage",
-            "psu",
-            "case",
-        )
         parts = {}
 
-        for field in fields:
+        for field in BUILD_FIELDS:
             part = data.get(field)
             if self.instance:
                 part = part or getattr(self.instance, field)
             parts[field] = part
 
-        errors = []
-
-        for field, part in parts.items():
-            if part and part.product_type != field:
-                errors.append(f"{field} has the wrong product type")
-
-        cpu = parts["cpu"]
-        motherboard = parts["motherboard"]
-        ram = parts["ram"]
-        gpu = parts["gpu"]
-        psu = parts["psu"]
-
-        if cpu and motherboard and cpu.socket != motherboard.socket:
-            errors.append("CPU socket does not match motherboard")
-        if ram and motherboard and ram.ram_type != motherboard.ram_type:
-            errors.append("RAM type does not match motherboard")
-        if gpu and psu and psu.wattage < gpu.recommended_psu:
-            errors.append("PSU is too weak for GPU")
+        errors = check_compatibility(parts)
 
         if errors:
             raise serializers.ValidationError(errors)
 
         return data
+
+
+class CompatibilitySerializer(serializers.Serializer):
+    cpu = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
+    gpu = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
+    motherboard = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
+    ram = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
+    storage = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
+    psu = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
+    case = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())

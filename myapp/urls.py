@@ -5,6 +5,7 @@ from .views import (
     CartItemViewSet,
     CartViewSet,
     CategoryViewSet,
+    CompatibilityView,
     CompareItemViewSet,
     CustomUserViewSet,
     LogoutView,
@@ -20,6 +21,7 @@ from .views import (
 
 
 urlpatterns = [
+    path("compatibility/check/", CompatibilityView.as_view()),
     path("register/", RegisterViewSet.as_view({"post": "create"})),
     path("login/", TokenObtainPairView.as_view()),
     path("logout/", LogoutView.as_view()),
