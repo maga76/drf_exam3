@@ -397,6 +397,7 @@ class ApiTests(APITestCase):
         filtered_reviews = self.client.get(
             f"/api/reviews/?product={products[0].id}"
         )
+        product_detail = self.client.get(f"/api/products/{products[0].id}/")
         wishlist = self.client.post(
             "/api/wishlist/",
             {"product": products[0].id},
@@ -414,6 +415,8 @@ class ApiTests(APITestCase):
         self.assertEqual(review.status_code, status.HTTP_201_CREATED)
         self.assertEqual(duplicate_review.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(filtered_reviews.data["count"], 1)
+        self.assertEqual(product_detail.data["average_rating"], 5.0)
+        self.assertEqual(product_detail.data["review_count"], 1)
         self.assertEqual(wishlist.status_code, status.HTTP_201_CREATED)
         self.assertEqual(
             duplicate_wishlist.status_code,
