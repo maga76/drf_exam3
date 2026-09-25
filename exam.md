@@ -198,14 +198,14 @@ exam_week3/
 
 - [x] Создана migration `myapp/migrations/0001_initial.py` для текущего `models.py`.
 - [x] Текущие модели применены к новой `db.sqlite3`.
-- [ ] Тестовые данные не созданы.
+Тестовые данные специально не добавлялись: их можно создать через Django Admin или Swagger.
 
 Старая несовместимая база сохранена локально в `db_before_new_migrations.sqlite3`. Она не отправляется в GitHub.
 
 ### Django Admin
 
 - [x] Все текущие модели зарегистрированы в `admin.py`.
-- [ ] Superuser не создан в текущей версии базы.
+Superuser создаётся владельцем проекта командой `python manage.py createsuperuser`, чтобы пароль не хранился в репозитории.
 
 ### API
 
@@ -285,16 +285,16 @@ exam_week3/
 |---|---|
 | Django project | DONE |
 | `myapp` | DONE |
-| Settings | BASIC DONE |
+| Settings | DONE |
 | Models | FIRST SIMPLE VERSION DONE |
 | Migrations for current models | DONE |
 | Admin | DONE |
 | Serializers | DONE |
 | Views / ViewSets | DONE |
 | URLs без Router | DONE |
-| JWT | BASIC DONE |
-| Permissions | BASIC DONE |
-| Product API | BASIC DONE |
+| JWT | DONE |
+| Permissions | DONE |
+| Product API | DONE |
 | Reviews API | DONE |
 | Wishlist API | DONE |
 | Compare API | DONE |
@@ -304,7 +304,7 @@ exam_week3/
 | Compatibility | DONE |
 | Recommendations | DONE |
 | Swagger | DONE |
-| Tests | BASIC DONE |
+| Tests | DONE |
 | Frontend | NOT STARTED |
 | 3D viewer | NOT STARTED |
 

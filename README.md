@@ -21,12 +21,23 @@ Backend интернет-магазина компьютеров, ноутбук
 
 Frontend в этот репозиторий не входит. Он подключается к backend через REST API.
 
-## Установка
+## Установка на Linux
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+python manage.py makemigrations
+python manage.py migrate
+```
+
+## Установка на Windows PowerShell
+
+```powershell
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+python manage.py makemigrations
 python manage.py migrate
 ```
 
@@ -70,21 +81,30 @@ Authorization: Bearer access_token
 
 ## Основные API endpoints
 
-- `/api/categories/`
-- `/api/products/`
-- `/api/reviews/`
-- `/api/wishlist/`
-- `/api/compare/`
-- `/api/carts/`
-- `/api/cart-items/`
-- `/api/cart/clear/`
-- `/api/orders/`
-- `/api/admin/users/`
-- `/api/admin/orders/`
-- `/api/pc-builds/`
-- `/api/compatibility/check/`
-- `/api/recommendations/laptops/`
-- `/api/recommendations/pc/`
+| Method | URL | Назначение |
+|---|---|---|
+| POST | `/api/register/` | Регистрация |
+| POST | `/api/login/` | Получение JWT |
+| POST | `/api/token/refresh/` | Обновление access token |
+| POST | `/api/logout/` | Выход и blacklist refresh token |
+| GET, PATCH | `/api/profile/` | Профиль текущего пользователя |
+| GET, POST | `/api/categories/` | Категории |
+| GET, POST | `/api/products/` | Товары |
+| GET, POST | `/api/reviews/` | Отзывы |
+| GET, POST | `/api/wishlist/` | Избранное |
+| GET, POST | `/api/compare/` | Сравнение |
+| GET | `/api/carts/` | Корзина текущего пользователя |
+| GET, POST | `/api/cart-items/` | Позиции корзины |
+| DELETE | `/api/cart/clear/` | Очистка корзины |
+| GET, POST | `/api/orders/` | Заказы текущего пользователя |
+| PATCH | `/api/orders/{id}/status/` | Изменение статуса Manager/Admin |
+| GET, POST | `/api/pc-builds/` | Сохранённые сборки ПК |
+| POST | `/api/compatibility/check/` | Проверка совместимости |
+| POST | `/api/recommendations/laptops/` | Рекомендация ноутбуков |
+| POST | `/api/recommendations/pc/` | Рекомендация сборки ПК |
+| GET | `/api/admin/users/` | Список пользователей для Admin |
+| GET, PATCH | `/api/admin/users/{id}/` | Управление пользователем Admin |
+| GET | `/api/admin/orders/` | Все заказы Manager/Admin |
 
 URL написаны вручную через `path()` и `as_view()`. DRF router не используется.
 
@@ -113,3 +133,5 @@ python manage.py makemigrations --check --dry-run
 ## База данных
 
 На текущем этапе используется SQLite. Файлы базы, виртуальное окружение, media и секреты не отправляются в GitHub.
+
+Тестовые товары можно создать через Django Admin или Swagger. Отдельный сложный seeder не используется.
