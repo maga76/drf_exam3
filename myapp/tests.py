@@ -366,3 +366,63 @@ class ApiTests(APITestCase):
         self.assertEqual(pc_response.status_code, status.HTTP_200_OK)
         self.assertTrue(pc_response.data["success"])
         self.assertEqual(pc_response.data["total_price"], 280)
+
+    def test_reviews_wishlist_and_compare_validation(self):
+        category = Category.objects.create(name="Validation")
+        products = [
+            Product.objects.create(
+                category=category,
+                name=f"Product {number}",
+                brand="Test",
+                product_type="other",
+                price="10.00",
+                stock=1,
+            )
+            for number in range(5)
+        ]
+        self.client.force_authenticate(self.user)
+
+        bad_review = self.client.post(
+            "/api/reviews/",
+            {"product": products[0].id, "rating": 6, "text": "Bad rating"},
+        )
+        review = self.client.post(
+            "/api/reviews/",
+            {"product": products[0].id, "rating": 5, "text": "Good"},
+        )
+        duplicate_review = self.client.post(
+            "/api/reviews/",
+            {"product": products[0].id, "rating": 4, "text": "Again"},
+        )
+        filtered_reviews = self.client.get(
+            f"/api/reviews/?product={products[0].id}"
+        )
+        wishlist = self.client.post(
+            "/api/wishlist/",
+            {"product": products[0].id},
+        )
+        duplicate_wishlist = self.client.post(
+            "/api/wishlist/",
+            {"product": products[0].id},
+        )
+        compare_responses = [
+            self.client.post("/api/compare/", {"product": product.id})
+            for product in products
+        ]
+
+        self.assertEqual(bad_review.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(review.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(duplicate_review.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(filtered_reviews.data["count"], 1)
+        self.assertEqual(wishlist.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(
+            duplicate_wishlist.status_code,
+            status.HTTP_400_BAD_REQUEST,
+        )
+        self.assertTrue(
+            all(response.status_code == status.HTTP_201_CREATED for response in compare_responses[:4])
+        )
+        self.assertEqual(
+            compare_responses[4].status_code,
+            status.HTTP_400_BAD_REQUEST,
+        )

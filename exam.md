@@ -238,6 +238,9 @@ exam_week3/
 
 ### Business logic
 
+- [x] Rating отзыва проверяется от 1 до 5.
+- [x] Повторный отзыв и повторный товар в избранном запрещены.
+- [x] В сравнение можно добавить не больше четырёх разных товаров.
 - [x] Корзина считает `item_total`, `subtotal` и общее количество.
 - [x] Добавлена простая проверка stock.
 - [x] Добавлена проверка quantity.
@@ -288,14 +291,14 @@ exam_week3/
 | URLs без Router | DONE |
 | JWT | BASIC DONE |
 | Permissions | BASIC DONE |
-| Product API | NOT DONE |
-| Reviews API | NOT DONE |
-| Wishlist API | NOT DONE |
-| Compare API | NOT DONE |
-| Cart API | NOT DONE |
-| Orders API | NOT DONE |
-| PC Builder API | NOT DONE |
-| Compatibility | NOT DONE |
+| Product API | BASIC DONE |
+| Reviews API | DONE |
+| Wishlist API | DONE |
+| Compare API | DONE |
+| Cart API | DONE |
+| Orders API | DONE |
+| PC Builder API | DONE |
+| Compatibility | DONE |
 | Recommendations | DONE |
 | Swagger | DONE |
 | Tests | BASIC DONE |

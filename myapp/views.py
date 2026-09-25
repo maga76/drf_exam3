@@ -299,6 +299,13 @@ class ReviewViewSet(ModelViewSet):
     queryset = Review.objects.all().order_by("id")
     serializer_class = ReviewSerializer
 
+    def get_queryset(self):
+        queryset = Review.objects.all().order_by("id")
+        product = self.request.query_params.get("product")
+        if product:
+            queryset = queryset.filter(product_id=product)
+        return queryset
+
     def get_permissions(self):
         if self.request.method == "GET":
             return [AllowAny()]

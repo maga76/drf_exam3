@@ -85,6 +85,26 @@ class ReviewSerializer(serializers.ModelSerializer):
         fields = "__all__"
         read_only_fields = ("user",)
 
+    def validate_rating(self, value):
+        if value < 1 or value > 5:
+            raise serializers.ValidationError("Rating must be from 1 to 5")
+        return value
+
+    def validate(self, data):
+        user = self.context["request"].user
+        product = data.get("product")
+
+        if self.instance:
+            product = product or self.instance.product
+            reviews = Review.objects.exclude(id=self.instance.id)
+        else:
+            reviews = Review.objects.all()
+
+        if reviews.filter(user=user, product=product).exists():
+            raise serializers.ValidationError("You already reviewed this product")
+
+        return data
+
 
 class WishlistSerializer(serializers.ModelSerializer):
     class Meta:
@@ -92,12 +112,31 @@ class WishlistSerializer(serializers.ModelSerializer):
         fields = "__all__"
         read_only_fields = ("user",)
 
+    def validate(self, data):
+        user = self.context["request"].user
+        product = data["product"]
+        if Wishlist.objects.filter(user=user, product=product).exists():
+            raise serializers.ValidationError("Product is already in wishlist")
+        return data
+
 
 class CompareItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = CompareItem
         fields = "__all__"
         read_only_fields = ("user",)
+
+    def validate(self, data):
+        user = self.context["request"].user
+        product = data["product"]
+        items = CompareItem.objects.filter(user=user)
+
+        if items.filter(product=product).exists():
+            raise serializers.ValidationError("Product is already in compare list")
+        if items.count() >= 4:
+            raise serializers.ValidationError("You can compare up to 4 products")
+
+        return data
 
 
 class CartSerializer(serializers.ModelSerializer):
