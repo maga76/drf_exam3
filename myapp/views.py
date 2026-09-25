@@ -1,4 +1,5 @@
 from django.db import transaction
+from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.filters import OrderingFilter, SearchFilter
@@ -34,6 +35,7 @@ from .serializers import (
     LaptopRecommendationSerializer,
     OrderItemSerializer,
     OrderSerializer,
+    OrderStatusSerializer,
     PCBuildSerializer,
     PCRecommendationSerializer,
     ProfileSerializer,
@@ -210,6 +212,17 @@ class PCRecommendationView(APIView):
         )
 
 
+class OrderStatusView(APIView):
+    permission_classes = [IsManagerOrAdmin]
+
+    def patch(self, request, pk):
+        order = get_object_or_404(Order, pk=pk)
+        serializer = OrderStatusSerializer(order, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+
 class RegisterViewSet(ModelViewSet):
     queryset = CustomUser.objects.all().order_by("id")
     serializer_class = RegisterSerializer
@@ -379,6 +392,8 @@ class OrderViewSet(ModelViewSet):
     def get_queryset(self):
         if not self.request.user.is_authenticated:
             return Order.objects.none()
+        if self.request.user.role in ("manager", "admin"):
+            return Order.objects.all().order_by("id")
         return Order.objects.filter(user=self.request.user).order_by("id")
 
     def perform_create(self, serializer):

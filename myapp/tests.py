@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from .models import Cart, CartItem, Category, CustomUser, OrderItem, Product
+from .models import Cart, CartItem, Category, CustomUser, Order, OrderItem, Product
 
 
 class ApiTests(APITestCase):
@@ -162,6 +162,34 @@ class ApiTests(APITestCase):
         self.assertEqual(product.stock, 3)
         self.assertEqual(CartItem.objects.count(), 0)
         self.assertEqual(OrderItem.objects.count(), 1)
+
+    def test_manager_can_change_order_status(self):
+        order = Order.objects.create(
+            user=self.user,
+            first_name="Test",
+            last_name="User",
+            phone="900000000",
+            city="Dushanbe",
+            address="Test address",
+        )
+        self.client.force_authenticate(self.user)
+        user_response = self.client.patch(
+            f"/api/orders/{order.id}/status/",
+            {"status": "confirmed"},
+        )
+
+        self.client.force_authenticate(self.manager)
+        manager_response = self.client.patch(
+            f"/api/orders/{order.id}/status/",
+            {"status": "confirmed"},
+        )
+        order_list = self.client.get("/api/orders/")
+        order.refresh_from_db()
+
+        self.assertEqual(user_response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(manager_response.status_code, status.HTTP_200_OK)
+        self.assertEqual(order.status, "confirmed")
+        self.assertEqual(order_list.data["count"], 1)
 
     def test_product_search_filter_and_pagination(self):
         category = Category.objects.create(name="Storage")

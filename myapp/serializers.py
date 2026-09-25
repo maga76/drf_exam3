@@ -179,6 +179,12 @@ class OrderItemSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class OrderStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = ("status",)
+
+
 class PCBuildSerializer(serializers.ModelSerializer):
     class Meta:
         model = PCBuild
