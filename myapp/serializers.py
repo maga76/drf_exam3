@@ -46,7 +46,16 @@ def check_compatibility(parts):
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ("id", "username", "email", "phone", "role", "avatar")
+        fields = (
+            "id",
+            "username",
+            "email",
+            "phone",
+            "role",
+            "avatar",
+            "is_active",
+        )
+        read_only_fields = ("id", "username", "email", "phone", "avatar")
 
 
 class ProfileSerializer(serializers.ModelSerializer):

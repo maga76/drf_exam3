@@ -183,13 +183,34 @@ class ApiTests(APITestCase):
             f"/api/orders/{order.id}/status/",
             {"status": "confirmed"},
         )
-        order_list = self.client.get("/api/orders/")
+        order_list = self.client.get("/api/admin/orders/")
         order.refresh_from_db()
 
         self.assertEqual(user_response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(manager_response.status_code, status.HTTP_200_OK)
         self.assertEqual(order.status, "confirmed")
         self.assertEqual(order_list.data["count"], 1)
+
+    def test_admin_can_manage_user_role_and_activity(self):
+        self.client.force_authenticate(self.user)
+        forbidden_response = self.client.get("/api/admin/users/")
+
+        self.client.force_authenticate(self.admin)
+        response = self.client.patch(
+            f"/api/admin/users/{self.user.id}/",
+            {
+                "username": "changed_username",
+                "role": "manager",
+                "is_active": False,
+            },
+        )
+        self.user.refresh_from_db()
+
+        self.assertEqual(forbidden_response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(self.user.username, "user")
+        self.assertEqual(self.user.role, "manager")
+        self.assertFalse(self.user.is_active)
 
     def test_product_search_filter_and_pagination(self):
         category = Category.objects.create(name="Storage")

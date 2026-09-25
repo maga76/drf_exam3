@@ -2,6 +2,7 @@ from django.urls import path
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from .views import (
+    AdminOrderViewSet,
     CartItemViewSet,
     CartViewSet,
     CategoryViewSet,
@@ -32,8 +33,10 @@ urlpatterns = [
     path("logout/", LogoutView.as_view()),
     path("token/refresh/", TokenRefreshView.as_view()),
     path("profile/", ProfileViewSet.as_view({"get": "retrieve", "put": "update", "patch": "partial_update"})),
-    path("users/", CustomUserViewSet.as_view({"get": "list", "post": "create"})),
-    path("users/<int:pk>/", CustomUserViewSet.as_view({"get": "retrieve", "put": "update", "patch": "partial_update", "delete": "destroy"})),
+    path("admin/users/", CustomUserViewSet.as_view({"get": "list"})),
+    path("admin/users/<int:pk>/", CustomUserViewSet.as_view({"get": "retrieve", "patch": "partial_update"})),
+    path("admin/orders/", AdminOrderViewSet.as_view({"get": "list"})),
+    path("admin/orders/<int:pk>/", AdminOrderViewSet.as_view({"get": "retrieve"})),
     path("categories/", CategoryViewSet.as_view({"get": "list", "post": "create"})),
     path("categories/<int:pk>/", CategoryViewSet.as_view({"get": "retrieve", "put": "update", "patch": "partial_update", "delete": "destroy"})),
     path("products/", ProductViewSet.as_view({"get": "list", "post": "create"})),

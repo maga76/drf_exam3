@@ -399,8 +399,6 @@ class OrderViewSet(ModelViewSet):
     def get_queryset(self):
         if not self.request.user.is_authenticated:
             return Order.objects.none()
-        if self.request.user.role in ("manager", "admin"):
-            return Order.objects.all().order_by("id")
         return Order.objects.filter(user=self.request.user).order_by("id")
 
     def perform_create(self, serializer):
@@ -443,6 +441,13 @@ class OrderItemViewSet(ModelViewSet):
         if not self.request.user.is_authenticated:
             return OrderItem.objects.none()
         return OrderItem.objects.filter(order__user=self.request.user).order_by("id")
+
+
+class AdminOrderViewSet(ModelViewSet):
+    queryset = Order.objects.all().order_by("id")
+    serializer_class = OrderSerializer
+    permission_classes = [IsManagerOrAdmin]
+
 
 class PCBuildViewSet(ModelViewSet):
     queryset = PCBuild.objects.all().order_by("id")

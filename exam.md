@@ -235,6 +235,7 @@ exam_week3/
 - [x] Написан `IsOwnerOrReadOnly`.
 - [x] Личные querysets фильтруются по текущему user.
 - [x] Manager/Admin видят все заказы и могут менять их статус.
+- [x] Добавлены отдельные Admin endpoints для пользователей и заказов.
 
 ### Business logic
 

@@ -79,6 +79,8 @@ Authorization: Bearer access_token
 - `/api/cart-items/`
 - `/api/cart/clear/`
 - `/api/orders/`
+- `/api/admin/users/`
+- `/api/admin/orders/`
 - `/api/pc-builds/`
 - `/api/compatibility/check/`
 - `/api/recommendations/laptops/`
